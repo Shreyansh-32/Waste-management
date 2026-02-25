@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
 import { signInSchema } from "@/lib/validations/auth";
 import type { z } from "zod";
 
@@ -33,10 +34,18 @@ export default function SignInPage() {
 
 		if (!result || result.error) {
 			setServerError("Invalid email or password.");
+			toast.error("Invalid email or password.");
 			return;
 		}
 
+		toast.success("Signed in successfully.");
 		router.push("/");
+	};
+
+	const onError = (formErrors: typeof errors) => {
+		const firstError = Object.values(formErrors)[0];
+		const message = firstError?.message ?? "Please check your inputs.";
+		toast.error(message);
 	};
 
 	return (
@@ -75,7 +84,10 @@ export default function SignInPage() {
 							</p>
 						</div>
 
-						<form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+						<form
+							className="space-y-5"
+							onSubmit={handleSubmit(onSubmit, onError)}
+						>
 							<div className="space-y-2">
 								<label className="text-sm font-medium text-black">Email</label>
 								<input
