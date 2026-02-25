@@ -1,0 +1,211 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  STUDENT
+  FACULTY
+  STAFF
+  ADMIN
+}
+
+enum IssueCategory {
+  WASHROOM
+  CLASSROOM
+  HOSTEL
+  CANTEEN
+  CORRIDOR
+  LAB
+  OUTDOOR
+  OTHER
+}
+
+enum IssueStatus {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+enum PriorityLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum LocationType {
+  CAMPUS
+  BUILDING
+  BLOCK
+  FLOOR
+  ROOM
+  AREA
+}
+
+enum PhotoKind {
+  BEFORE
+  AFTER
+}
+
+enum NotificationType {
+  STATUS_CHANGE
+  ASSIGNMENT
+  ESCALATION
+  COMMENT
+}
+
+model User {
+  id              String         @id @default(cuid())
+  email           String         @unique
+  passwordHash    String?
+  name            String
+  phone           String?
+  role            UserRole       @default(STUDENT)
+  isActive        Boolean        @default(true)
+  reputationScore Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  reportedIssues  Issue[]        @relation("ReporterIssues")
+  assignments     Assignment[]   @relation("StaffAssignments")
+  assignedBy      Assignment[]   @relation("AssignedByUser")
+  notifications   Notification[]
+  statusChanges   StatusHistory[]
+  issueVotes      IssueVote[]
+}
+
+model Location {
+  id        String       @id @default(cuid())
+  name      String
+  type      LocationType
+  parentId  String?
+  parent    Location?    @relation("LocationHierarchy", fields: [parentId], references: [id])
+  children  Location[]   @relation("LocationHierarchy")
+  qrCode    String?      @unique
+  gpsLat    Float?
+  gpsLng    Float?
+  metadata  Json?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  issues    Issue[]
+
+  @@index([type])
+  @@index([parentId])
+}
+
+model Issue {
+  id              String          @id @default(cuid())
+  title           String?
+  description     String
+  category        IssueCategory
+  status          IssueStatus     @default(PENDING)
+  priority        PriorityLevel   @default(MEDIUM)
+  urgencyScore    Int             @default(0)
+  isAnonymous     Boolean         @default(false)
+  reporterId      String?
+  reporter        User?           @relation("ReporterIssues", fields: [reporterId], references: [id])
+  locationId      String
+  location        Location        @relation(fields: [locationId], references: [id])
+  escalationLevel Int             @default(0)
+  dueAt           DateTime?
+  resolvedAt      DateTime?
+  duplicateOfId   String?
+  duplicateOf     Issue?          @relation("IssueDuplicates", fields: [duplicateOfId], references: [id])
+  duplicates      Issue[]         @relation("IssueDuplicates")
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  photos          IssuePhoto[]
+  assignments     Assignment[]
+  statusHistory   StatusHistory[]
+  votes           IssueVote[]
+  notifications   Notification[]
+
+  @@index([status])
+  @@index([priority])
+  @@index([category])
+  @@index([locationId])
+  @@index([reporterId])
+}
+
+model IssuePhoto {
+  id        String    @id @default(cuid())
+  issueId   String
+  issue     Issue     @relation(fields: [issueId], references: [id])
+  url       String
+  kind      PhotoKind @default(BEFORE)
+  createdAt DateTime  @default(now())
+
+  @@index([issueId])
+  @@index([kind])
+}
+
+model Assignment {
+  id             String        @id @default(cuid())
+  issueId        String
+  issue          Issue         @relation(fields: [issueId], references: [id])
+  staffId        String
+  staff          User          @relation("StaffAssignments", fields: [staffId], references: [id])
+  assignedById   String?
+  assignedBy     User?         @relation("AssignedByUser", fields: [assignedById], references: [id])
+  assignedAt     DateTime      @default(now())
+  startedAt      DateTime?
+  completedAt    DateTime?
+  completionNote String?
+  completionPhotoUrl String?
+
+  @@index([issueId])
+  @@index([staffId])
+}
+
+model StatusHistory {
+  id         String       @id @default(cuid())
+  issueId    String
+  issue      Issue        @relation(fields: [issueId], references: [id])
+  fromStatus IssueStatus?
+  toStatus   IssueStatus
+  changedById String?
+  changedBy  User?        @relation(fields: [changedById], references: [id])
+  note       String?
+  createdAt  DateTime     @default(now())
+
+  @@index([issueId])
+  @@index([toStatus])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  issueId   String?
+  issue     Issue?           @relation(fields: [issueId], references: [id])
+  type      NotificationType
+  message   String
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId])
+  @@index([issueId])
+  @@index([type])
+}
+
+model IssueVote {
+  id        String   @id @default(cuid())
+  issueId   String
+  issue     Issue    @relation(fields: [issueId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([issueId, userId])
+  @@index([issueId])
+}
+
