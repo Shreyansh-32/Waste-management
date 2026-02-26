@@ -25,7 +25,6 @@ export default function AdminLocationsPage() {
 
   const [name, setName] = useState("");
   const [type, setType] = useState<(typeof locationTypes)[number]>("CAMPUS");
-  const [parentId, setParentId] = useState("");
   const [qrCode, setQrCode] = useState("");
   const [creating, setCreating] = useState(false);
 
@@ -37,9 +36,9 @@ export default function AdminLocationsPage() {
   const generateAndDownloadQR = async (location: LocationItem) => {
     setGeneratingQR(location.id);
     try {
-      // Generate QR code with location's QR code or ID
-      const qrData = location.qrCode || location.id;
-      const qrCodeDataURL = await QRCodeLib.toDataURL(qrData, {
+      // Generate QR code with URL to report page including location ID
+      const reportUrl = `${window.location.origin}/report?locationId=${location.id}`;
+      const qrCodeDataURL = await QRCodeLib.toDataURL(reportUrl, {
         width: 512,
         margin: 2,
         color: {
@@ -76,14 +75,12 @@ export default function AdminLocationsPage() {
         body: JSON.stringify({
           name: name.trim(),
           type,
-          parentId: parentId || null,
-          qrCode: qrCode.trim() || null,
+          ...(qrCode.trim() && { qrCode: qrCode.trim() }),
         }),
       });
       if (!res.ok) throw new Error();
       toast.success("Location created");
       setName("");
-      setParentId("");
       setQrCode("");
       mutate();
     } catch {
@@ -128,16 +125,6 @@ export default function AdminLocationsPage() {
             >
               {locationTypes.map((t) => (
                 <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
-            <select
-              value={parentId}
-              onChange={(e) => setParentId(e.target.value)}
-              className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300"
-            >
-              <option value="">No parent</option>
-              {locations.map((loc) => (
-                <option key={loc.id} value={loc.id}>{loc.name} ({loc.type})</option>
               ))}
             </select>
             <input

@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import useSWR from "swr";
 import Navbar from "@/components/Navbar";
 import Button from "@/components/ui/Button";
 import { UploadButton } from "@/lib/uploadthing-client";
 import toast from "react-hot-toast";
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 const categories = [
   "WASHROOM",
@@ -22,13 +25,36 @@ type IssueCategory = (typeof categories)[number];
 
 export default function ReportIssuePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState<IssueCategory>("WASHROOM");
   const [locationId, setLocationId] = useState("");
+  const [locationName, setLocationName] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch location details from query param
+  const queryLocationId = searchParams.get("locationId");
+  const { data: locationData } = useSWR(
+    queryLocationId ? `/api/locations/${queryLocationId}` : null,
+    fetcher
+  );
+
+  // Prefill location when query param is present
+  useEffect(() => {
+    if (queryLocationId) {
+      setLocationId(queryLocationId);
+    }
+  }, [queryLocationId]);
+
+  // Update location name when data is fetched
+  useEffect(() => {
+    if (locationData?.location) {
+      setLocationName(locationData.location.name);
+    }
+  }, [locationData]);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -122,16 +148,32 @@ export default function ReportIssuePage() {
               </div>
 
               <div className="grid gap-2">
-                <label className="text-sm font-medium">Location ID</label>
-                <input
-                  value={locationId}
-                  onChange={(e) => setLocationId(e.target.value)}
-                  className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
-                  placeholder="Paste the location ID or scan QR"
-                  required
-                />
+                <label className="text-sm font-medium">Location</label>
+                {locationName && locationId ? (
+                  <div className="w-full rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 flex items-center justify-between">
+                    <span className="font-medium">{locationName}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLocationId("");
+                        setLocationName(null);
+                      }}
+                      className="text-xs text-emerald-600 dark:text-emerald-400 hover:underline"
+                    >
+                      Change
+                    </button>
+                  </div>
+                ) : (
+                  <input
+                    value={locationId}
+                    onChange={(e) => setLocationId(e.target.value)}
+                    className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
+                    placeholder="Paste the location ID or scan QR code"
+                    required
+                  />
+                )}
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  You can use the QR lookup endpoint to fetch the location ID.
+                  Scan the QR code at your location or paste the location ID.
                 </p>
               </div>
 
@@ -176,7 +218,7 @@ export default function ReportIssuePage() {
               <Button
                 type="submit"
                 size="lg"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !locationId}
                 className="w-full bg-linear-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-200/80 transition disabled:cursor-not-allowed disabled:opacity-70 hover:shadow-emerald-300/80"
               >
                 {isSubmitting ? "Submitting..." : "Submit issue"}

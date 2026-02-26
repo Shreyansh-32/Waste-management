@@ -18,7 +18,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validatedData = createIssueSchema.parse(body);
 
-    // Calculate initial priority/category and allow Gemini to refine from images
+    // Use user-provided category and let Gemini AI suggest priority from images
+    const finalCategory = validatedData.category;
+    const initialPriority = calculateInitialPriority(
+      finalCategory,
+      validatedData.description,
+    );
+
     let aiClassification: Awaited<ReturnType<typeof classifyIssueFromImages>> = null;
     try {
       aiClassification = await classifyIssueFromImages({
@@ -29,11 +35,6 @@ export async function POST(req: NextRequest) {
       aiClassification = null;
     }
 
-    const finalCategory = aiClassification?.category ?? validatedData.category;
-    const initialPriority = calculateInitialPriority(
-      finalCategory,
-      validatedData.description,
-    );
     const finalPriority = aiClassification?.priority ?? initialPriority;
 
     const urgencyScore = calculateUrgencyScore({

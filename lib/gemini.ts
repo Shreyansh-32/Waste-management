@@ -1,18 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
-import type { IssueCategory, PriorityLevel } from "@/lib/generated/prisma";
+import type { PriorityLevel } from "@/lib/generated/prisma";
 
 const responseSchema = z.object({
-  category: z.enum([
-    "WASHROOM",
-    "CLASSROOM",
-    "HOSTEL",
-    "CANTEEN",
-    "CORRIDOR",
-    "LAB",
-    "OUTDOOR",
-    "OTHER",
-  ]),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
 });
 
@@ -34,7 +24,7 @@ async function fetchImageAsBase64(url: string) {
 export async function classifyIssueFromImages(params: {
   description: string;
   imageUrls: string[];
-}): Promise<{ category: IssueCategory; priority: PriorityLevel } | null> {
+}): Promise<{ priority: PriorityLevel } | null> {
   if (!hasGeminiKey()) {
     return null;
   }
@@ -53,7 +43,7 @@ export async function classifyIssueFromImages(params: {
     })),
   );
 
-  const prompt = `You are classifying campus cleanliness issues.\n\nReturn ONLY valid JSON with keys: category, priority.\n\nAllowed category values: WASHROOM, CLASSROOM, HOSTEL, CANTEEN, CORRIDOR, LAB, OUTDOOR, OTHER\nAllowed priority values: LOW, MEDIUM, HIGH, CRITICAL\n\nDescription: ${description}`;
+  const prompt = `You are analyzing campus cleanliness issues to determine their priority level.\n\nReturn ONLY valid JSON with key: priority.\n\nAllowed priority values:\n- LOW: Minor cosmetic issues, no health/safety concerns\n- MEDIUM: Noticeable cleanliness issues, should be addressed soon\n- HIGH: Significant cleanliness/hygiene issues, affects usability\n- CRITICAL: Severe health/safety hazards, requires immediate attention\n\nDescription: ${description}`;
 
   const result = await model.generateContent([prompt, ...imageParts]);
   const text = result.response.text().trim();
