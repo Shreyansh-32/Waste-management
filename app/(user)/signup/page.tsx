@@ -68,7 +68,7 @@ export default function SignUpPage() {
     }
 
     toast.success("Account created successfully.");
-    router.push("/");
+    router.push("/dashboard");
   };
 
   const onError = (formErrors: typeof errors) => {

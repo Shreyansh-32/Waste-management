@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import AppToaster from "@/components/toaster";
+import { ThemeProvider } from "@/components/dashboard/ThemeProvider";
 import { Providers } from "./providers";
+import NextAuthSessionProvider from "@/components/SessionProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,10 +48,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${spaceGrotesk.variable} antialiased`}
       >
+        <NextAuthSessionProvider>
+        <ThemeProvider>
         <Providers>
           {children}
           <AppToaster />
         </Providers>
+        </ThemeProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   );
