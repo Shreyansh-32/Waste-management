@@ -1,22 +1,59 @@
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
+import { Geist, Geist_Mono, Poppins, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import AppToaster from "@/components/toaster";
+import { ThemeProvider } from "@/components/dashboard/ThemeProvider";
 import { Providers } from "./providers";
+import NextAuthSessionProvider from "@/components/SessionProvider";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
-  title: "Smart Campus Cleanliness Monitoring System",
+  title: "CampusClean - Campus Operations Management",
   description:
-    "Real-time reporting, intelligent prioritization, and data-driven maintenance scheduling for cleaner, healthier campuses.",
+    "Real-time campus cleanliness tracking with verified photo evidence and accountability.",
+  icons: {
+    icon: "/Logo.png",
+  },
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <Providers>{children}</Providers>
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${spaceGrotesk.variable} antialiased`}
+      >
+        <NextAuthSessionProvider>
+        <ThemeProvider>
+        <Providers>
+          {children}
+          <AppToaster />
+        </Providers>
+        </ThemeProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   );
