@@ -7,6 +7,7 @@ export const locationTypeSchema = z.enum([
   "FLOOR",
   "ROOM",
   "AREA",
+  "WASHROOM",
 ]);
 
 // Create location validation

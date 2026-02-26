@@ -39,23 +39,35 @@ export function calculateUrgencyScore(params: {
   };
   score += priorityWeights[priority];
 
-  // Description-based urgency indicators (0-15 points)
+  // Description-based urgency indicators (0-20 points) - increased range for more variety
   if (description) {
     const desc = description.toLowerCase();
     let descScore = 0;
     
-    // Severe urgency keywords (+10-15 points)
-    if (desc.match(/\b(urgent|emergency|immediate|asap|critical|severe)\b/)) descScore += 12;
-    else if (desc.match(/\b(overflow|leak|broken|smell|odor|pest|rat|cockroach)\b/)) descScore += 8;
-    else if (desc.match(/\b(dirty|filthy|messy|needs cleaning|very)\b/)) descScore += 5;
-    else if (desc.match(/\b(small|minor|little|bit)\b/)) descScore -= 3;
+    // Severe urgency keywords (+12-16 points)
+    if (desc.match(/\b(urgent|emergency|immediate|asap|critical|severe|dangerous)\b/)) descScore += 16;
+    // High urgency
+    else if (desc.match(/\b(overflow|leak|broken|smell|odor|pest|rat|cockroach|filthy|disgusting)\b/)) descScore += 12;
+    // Medium urgency
+    else if (desc.match(/\b(dirty|messy|needs cleaning|very dirty|trash|scattered)\b/)) descScore += 7;
+    // Low urgency
+    else if (desc.match(/\b(small|minor|little|bit|dust|spot|light stain)\b/)) descScore -= 3;
     
     // Description length suggests detail/severity
-    if (description.length > 200) descScore += 3;
+    if (description.length > 300) descScore += 5;
+    else if (description.length > 200) descScore += 3;
     else if (description.length > 100) descScore += 2;
-    else if (description.length < 30) descScore -= 2;
+    else if (description.length < 20) descScore -= 4;
     
-    score += Math.max(0, Math.min(descScore, 15));
+    // Word count indicators
+    const wordCount = description.split(/\s+/).length;
+    if (wordCount > 50) descScore += 3;
+    else if (wordCount < 5) descScore -= 2;
+    
+    // Exclamation marks indicate urgency
+    if (description.includes('!')) descScore += 2;
+    
+    score += Math.max(0, Math.min(descScore, 20));
   }
 
   // Photo count (0-10 points) - more photos = more evidence of severity
@@ -87,30 +99,33 @@ export function calculateInitialPriority(
   const desc = description.toLowerCase();
   
   // Critical keywords - severe hazards
-  const criticalKeywords = ["emergency", "sewage", "biohazard", "injury", "broken glass", "structural damage", "major leak"];
+  const criticalKeywords = [
+    "emergency", "sewage", "biohazard", "injury", "broken glass", "structural damage", 
+    "major leak", "flood", "blood", "immediate", "critical", "urgent danger"
+  ];
   const hasCriticalKeyword = criticalKeywords.some((keyword) => desc.includes(keyword));
-  
-  if (hasCriticalKeyword) {
-    return "CRITICAL";
-  }
+  if (hasCriticalKeyword) return "CRITICAL";
 
-  // High priority keywords - significant issues
-  const highKeywords = ["overflow", "leak", "foul smell", "pest", "rats", "cockroach", "large spill"];
+  // High priority keywords - significant issues that need attention soon
+  const highKeywords = [
+    "overflow", "leak", "foul smell", "odor", "pest", "rats", "cockroach", 
+    "large spill", "very dirty", "smell", "broken", "damage", "mess"
+  ];
   const hasHighKeyword = highKeywords.some((keyword) => desc.includes(keyword));
-  
-  if (hasHighKeyword) {
-    return "HIGH";
-  }
+  if (hasHighKeyword) return "HIGH";
 
   // Low priority keywords - minor issues
-  const lowKeywords = ["small", "minor", "tiny", "dust", "spot", "little"];
+  const lowKeywords = [
+    "small", "minor", "tiny", "dust", "little spot", "light", "aesthetic", "cosmetic"
+  ];
   const hasLowKeyword = lowKeywords.some((keyword) => desc.includes(keyword));
-  
-  if (hasLowKeyword) {
-    return "LOW";
-  }
+  if (hasLowKeyword) return "LOW";
 
-  // Default to MEDIUM for most cases (not HIGH)
+  // Check if description length suggests severity
+  if (description.length > 300) return "HIGH"; // Detailed problems are serious
+  if (description.length < 20) return "LOW"; // Vague = not urgent
+  
+  // Default to MEDIUM for most cases
   return "MEDIUM";
 }
 

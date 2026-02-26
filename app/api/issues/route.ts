@@ -37,22 +37,33 @@ export async function POST(req: NextRequest) {
     }
 
     const finalPriority = aiClassification?.priority ?? initialPriority;
+    
+    // Use Gemini's urgency score if available, otherwise calculate locally
+    let urgencyScore: number;
+    if (aiClassification?.urgencyScore !== undefined) {
+      urgencyScore = aiClassification.urgencyScore;
+      console.log('[Issue Creation] Using Gemini urgency score:', urgencyScore);
+    } else {
+      urgencyScore = calculateUrgencyScore({
+        category: finalCategory,
+        priority: finalPriority,
+        voteCount: 0,
+        escalationLevel: 0,
+        ageInHours: 0,
+        description: validatedData.description,
+        photoCount: validatedData.photoUrls.length,
+      });
+      console.log('[Issue Creation] Using calculated urgency score:', urgencyScore);
+    }
+    
     console.log('[Issue Creation] Priority decision:', {
       aiPriority: aiClassification?.priority,
       fallbackPriority: initialPriority,
       finalPriority,
+      urgencyScore,
       category: finalCategory,
     });
 
-    const urgencyScore = calculateUrgencyScore({
-      category: finalCategory,
-      priority: finalPriority,
-      voteCount: 0,
-      escalationLevel: 0,
-      ageInHours: 0,
-      description: validatedData.description,
-      photoCount: validatedData.photoUrls.length,
-    });
     const dueAt = calculateDueDate(finalPriority);
 
     // Create issue with photos in a transaction

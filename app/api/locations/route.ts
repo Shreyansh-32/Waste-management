@@ -103,6 +103,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ location }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log(error);
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
         { status: 400 },

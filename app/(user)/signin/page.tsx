@@ -219,4 +219,7 @@ export default function SignInPage() {
 
         </div>
       </div>
-    </>\n  );\n}
+      </div>
+    </>
+  )
+}
