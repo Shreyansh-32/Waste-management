@@ -1,11 +1,12 @@
 "use client";
 
 import useSWR from "swr";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { Calendar, Loader2, MapPin, ThumbsUp } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
+import { PhotoViewer } from "@/components/PhotoViewer";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -30,7 +31,15 @@ export default function UserIssueDetailPage() {
   const { data, isLoading, mutate } = useSWR(`/api/issues/${issueId}`, fetcher);
   const issue = data?.issue;
 
+  const [photoViewerOpen, setPhotoViewerOpen] = useState(false);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
+
   const hasVoted = useMemo(() => (issue?.votes?.length ?? 0) > 0, [issue?.votes]);
+
+  const openPhotoViewer = (index: number) => {
+    setSelectedPhotoIndex(index);
+    setPhotoViewerOpen(true);
+  };
 
   const toggleVote = async () => {
     try {
@@ -110,16 +119,34 @@ export default function UserIssueDetailPage() {
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5">
         <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Photos</h3>
         {issue.photos?.length ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {issue.photos.map((photo: { id: string; url: string }) => (
-              <img
-                key={photo.id}
-                src={photo.url}
-                alt="Issue"
-                className="h-28 w-full object-cover rounded-xl border border-slate-200 dark:border-slate-800"
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {issue.photos.map((photo: { id: string; url: string }, index: number) => (
+                <button
+                  key={photo.id}
+                  onClick={() => openPhotoViewer(index)}
+                  className="relative h-28 w-full rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden group cursor-pointer"
+                >
+                  <img
+                    src={photo.url}
+                    alt={`Issue photo ${index + 1}`}
+                    className="h-full w-full object-cover transition-transform group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                    <span className="opacity-0 group-hover:opacity-100 text-white text-xs font-semibold bg-black/50 px-2 py-1 rounded">
+                      View
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <PhotoViewer
+              photos={issue.photos.map((p: { url: string }) => p.url)}
+              initialIndex={selectedPhotoIndex}
+              isOpen={photoViewerOpen}
+              onClose={() => setPhotoViewerOpen(false)}
+            />
+          </>
         ) : (
           <p className="text-xs text-slate-400 dark:text-slate-500">No photos uploaded.</p>
         )}

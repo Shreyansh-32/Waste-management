@@ -1,9 +1,10 @@
 "use client";
 
 import useSWR from "swr";
-import { useState } from "react";
-import { Loader2, MapPin } from "lucide-react";
+import { useState, useRef } from "react";
+import { Loader2, MapPin, QrCode, Download } from "lucide-react";
 import toast from "react-hot-toast";
+import QRCodeLib from "qrcode";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -31,6 +32,35 @@ export default function AdminLocationsPage() {
   const [qrLookup, setQrLookup] = useState("");
   const [qrResult, setQrResult] = useState<LocationItem | null>(null);
   const [lookupLoading, setLookupLoading] = useState(false);
+  const [generatingQR, setGeneratingQR] = useState<string | null>(null);
+
+  const generateAndDownloadQR = async (location: LocationItem) => {
+    setGeneratingQR(location.id);
+    try {
+      // Generate QR code with location's QR code or ID
+      const qrData = location.qrCode || location.id;
+      const qrCodeDataURL = await QRCodeLib.toDataURL(qrData, {
+        width: 512,
+        margin: 2,
+        color: {
+          dark: "#047857", // emerald-700
+          light: "#ffffff",
+        },
+      });
+
+      // Create download link
+      const link = document.createElement("a");
+      link.href = qrCodeDataURL;
+      link.download = `qr-${location.name.replace(/[^a-z0-9]/gi, "-").toLowerCase()}.png`;
+      link.click();
+
+      toast.success("QR code downloaded");
+    } catch (error) {
+      toast.error("Failed to generate QR code");
+    } finally {
+      setGeneratingQR(null);
+    }
+  };
 
   const createLocation = async () => {
     if (!name.trim()) {
@@ -174,9 +204,32 @@ export default function AdminLocationsPage() {
                   <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 truncate">{loc.name}</p>
                   <p className="text-xs text-slate-400 dark:text-slate-500">
                     {loc.type} {loc.parent ? `· Parent: ${loc.parent.name}` : ""}
+                    {loc.qrCode && (
+                      <span className="ml-2 inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                        <QrCode className="w-3 h-3" />
+                        QR: {loc.qrCode}
+                      </span>
+                    )}
                   </p>
                 </div>
-                <div className="text-xs text-slate-400 dark:text-slate-500">{loc._count.issues} issues</div>
+                <div className="flex items-center gap-3">
+                  <div className="text-xs text-slate-400 dark:text-slate-500">{loc._count.issues} issues</div>
+                  <button
+                    onClick={() => generateAndDownloadQR(loc)}
+                    disabled={generatingQR === loc.id}
+                    className="flex items-center gap-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900/50 disabled:opacity-60 transition-colors"
+                    title="Download QR code"
+                  >
+                    {generatingQR === loc.id ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <>
+                        <Download className="w-3.5 h-3.5" />
+                        QR
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
