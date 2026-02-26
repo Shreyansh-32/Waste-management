@@ -43,15 +43,35 @@ export async function classifyIssueFromImages(params: {
     })),
   );
 
-  const prompt = `You are analyzing campus cleanliness issues to determine their priority level.\n\nReturn ONLY valid JSON with key: priority.\n\nAllowed priority values:\n- LOW: Minor cosmetic issues, no health/safety concerns\n- MEDIUM: Noticeable cleanliness issues, should be addressed soon\n- HIGH: Significant cleanliness/hygiene issues, affects usability\n- CRITICAL: Severe health/safety hazards, requires immediate attention\n\nDescription: ${description}`;
+  const prompt = `Analyze the provided images and description of a campus cleanliness issue. Determine the appropriate priority level based on severity.
+
+Priority Levels (be specific and vary based on actual severity):
+- LOW: Minor aesthetic issues like small spots, light dust, minor clutter. No impact on health or usability.
+- MEDIUM: Noticeable cleanliness issues like moderate dirt, trash accumulation, minor spills. Should be cleaned but not urgent.
+- HIGH: Significant hygiene problems like large spills, overflowing bins, foul odors, pest presence. Affects usability and comfort.
+- CRITICAL: Severe health/safety hazards like sewage, biohazards, major leaks, broken glass, structural damage. Requires immediate attention.
+
+Be realistic - not everything is HIGH or CRITICAL. Use LOW and MEDIUM frequently for minor issues.
+
+Description: ${description}
+
+Respond with ONLY a JSON object in this exact format (no markdown, no code blocks):
+{"priority": "LOW"}
+
+Replace LOW with the appropriate level: LOW, MEDIUM, HIGH, or CRITICAL.`;
 
   const result = await model.generateContent([prompt, ...imageParts]);
-  const text = result.response.text().trim();
+  let text = result.response.text().trim();
+
+  // Remove markdown code blocks if present
+  text = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '');
 
   try {
     const parsed = responseSchema.parse(JSON.parse(text));
+    console.log('[Gemini AI] Successfully classified issue:', parsed);
     return parsed;
-  } catch {
+  } catch (error) {
+    console.error('[Gemini AI] Failed to parse response:', text, error);
     return null;
   }
 }

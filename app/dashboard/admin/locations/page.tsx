@@ -8,7 +8,7 @@ import QRCodeLib from "qrcode";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-const locationTypes = ["CAMPUS", "BUILDING", "BLOCK", "FLOOR", "ROOM", "AREA"] as const;
+const locationTypes = ["CAMPUS", "BUILDING", "BLOCK", "FLOOR", "ROOM", "AREA", "WASHROOM"] as const;
 
 interface LocationItem {
   id: string;

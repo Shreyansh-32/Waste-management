@@ -19,6 +19,7 @@ export async function POST(
     const issue = await prisma.issue.findUnique({
       where: { id: params.id },
       include: {
+        photos: true,
         _count: {
           select: { votes: true },
         },
@@ -71,6 +72,8 @@ export async function POST(
       voteCount: newVoteCount,
       escalationLevel: issue.escalationLevel,
       ageInHours,
+      description: issue.description,
+      photoCount: issue.photos.length,
     });
 
     // Update issue with new urgency score

@@ -11,6 +11,7 @@ import { Leaf, Mail, Lock, ArrowRight, CheckCircle2, Activity, BarChart2 } from 
 import { signInSchema } from "@/lib/validations/auth";
 import type { z } from "zod";
 import { motion } from "framer-motion";
+import Navbar from "@/components/Navbar";
 
 type SignInValues = z.infer<typeof signInSchema>;
 
@@ -60,9 +61,11 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#f8fffe]">
-      {/* Background blobs */}
-      <div className="pointer-events-none absolute inset-0">
+    <>
+      <Navbar />
+      <div className="relative min-h-screen overflow-hidden bg-[#f8fffe]">
+        {/* Background blobs */}
+        <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-24 right-0 h-[500px] w-[500px] rounded-full bg-emerald-200/30 blur-[120px]" />
         <div className="absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-lime-200/25 blur-[100px]" />
         <div className="absolute inset-0 bg-grid opacity-100" />
@@ -216,6 +219,4 @@ export default function SignInPage() {
 
         </div>
       </div>
-    </div>
-  );
-}
+    </>\n  );\n}

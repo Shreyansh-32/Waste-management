@@ -125,6 +125,7 @@ export async function PATCH(
     const existingIssue = await prisma.issue.findUnique({
       where: { id: params.id },
       include: {
+        photos: true,
         _count: {
           select: { votes: true },
         },
@@ -161,6 +162,8 @@ export async function PATCH(
         voteCount: existingIssue._count.votes,
         escalationLevel: existingIssue.escalationLevel,
         ageInHours,
+        description: existingIssue.description,
+        photoCount: existingIssue.photos.length,
       });
     }
 

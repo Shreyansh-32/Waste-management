@@ -6,6 +6,11 @@ const footerLinks = {
   Product: ["Features", "How It Works", "Analytics", "Pricing", "Changelog"],
   Resources: ["Documentation", "API Reference", "Case Studies", "Blog", "Status"],
   Company: ["About", "Careers", "Contact", "Privacy Policy", "Terms of Service"],
+  Access: [
+    { label: "User Sign In", href: "/signin" },
+    { label: "Admin Sign In", href: "/admin/signin" },
+    { label: "Staff Sign In", href: "/staff/signin" },
+  ],
 };
 
 export default function Footer() {
@@ -66,16 +71,22 @@ export default function Footer() {
             <div key={category}>
               <h4 className="text-white font-semibold text-sm mb-4">{category}</h4>
               <ul className="flex flex-col gap-2.5">
-                {links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
-                      className="text-sm hover:text-emerald-400 transition-colors duration-150"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
+                {links.map((link) => {
+                  const isObject = typeof link === 'object';
+                  const label = isObject ? link.label : link;
+                  const href = isObject ? link.href : '#';
+                  
+                  return (
+                    <li key={label}>
+                      <a
+                        href={href}
+                        className="text-sm hover:text-emerald-400 transition-colors duration-150"
+                      >
+                        {label}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}

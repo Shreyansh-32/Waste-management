@@ -43,11 +43,18 @@ export default function UserIssueDetailPage() {
 
   const toggleVote = async () => {
     try {
-      const res = await fetch(`/api/issues/${issueId}/vote`, { method: "POST" });
-      if (!res.ok) throw new Error();
-      mutate();
-    } catch {
-      toast.error("Unable to vote");
+      const res = await fetch(`/api/issues/${issueId}/vote`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to vote");
+      }
+      await mutate();
+      toast.success(hasVoted ? "Vote removed" : "Vote added");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to vote");
     }
   };
 

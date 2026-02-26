@@ -31,11 +31,18 @@ export async function POST(req: NextRequest) {
         description: validatedData.description,
         imageUrls: validatedData.photoUrls,
       });
-    } catch {
+    } catch (error) {
+      console.error('[Issue Creation] Gemini AI classification failed:', error);
       aiClassification = null;
     }
 
     const finalPriority = aiClassification?.priority ?? initialPriority;
+    console.log('[Issue Creation] Priority decision:', {
+      aiPriority: aiClassification?.priority,
+      fallbackPriority: initialPriority,
+      finalPriority,
+      category: finalCategory,
+    });
 
     const urgencyScore = calculateUrgencyScore({
       category: finalCategory,
@@ -43,6 +50,8 @@ export async function POST(req: NextRequest) {
       voteCount: 0,
       escalationLevel: 0,
       ageInHours: 0,
+      description: validatedData.description,
+      photoCount: validatedData.photoUrls.length,
     });
     const dueAt = calculateDueDate(finalPriority);
 

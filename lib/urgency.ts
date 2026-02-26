@@ -10,41 +10,67 @@ export function calculateUrgencyScore(params: {
   voteCount: number;
   escalationLevel: number;
   ageInHours: number;
+  description?: string;
+  photoCount?: number;
 }): number {
-  const { category, priority, voteCount, escalationLevel, ageInHours } = params;
+  const { category, priority, voteCount, escalationLevel, ageInHours, description, photoCount } = params;
 
   let score = 0;
 
-  // Category weight (0-25 points)
+  // Category weight (0-20 points) - reduced from 25 to allow more variance
   const categoryWeights: Record<IssueCategory, number> = {
-    WASHROOM: 25,
-    CANTEEN: 20,
+    WASHROOM: 20,
+    CANTEEN: 18,
     CORRIDOR: 15,
     CLASSROOM: 15,
     LAB: 15,
     HOSTEL: 12,
-    OUTDOOR: 8,
-    OTHER: 5,
+    OUTDOOR: 10,
+    OTHER: 8,
   };
   score += categoryWeights[category];
 
-  // Priority weight (0-30 points)
+  // Priority weight (0-35 points) - increased range for more differentiation
   const priorityWeights: Record<PriorityLevel, number> = {
-    CRITICAL: 30,
-    HIGH: 20,
-    MEDIUM: 10,
+    CRITICAL: 35,
+    HIGH: 25,
+    MEDIUM: 15,
     LOW: 5,
   };
   score += priorityWeights[priority];
 
-  // Vote count (0-20 points) - more votes = more urgent
-  score += Math.min(voteCount * 2, 20);
+  // Description-based urgency indicators (0-15 points)
+  if (description) {
+    const desc = description.toLowerCase();
+    let descScore = 0;
+    
+    // Severe urgency keywords (+10-15 points)
+    if (desc.match(/\b(urgent|emergency|immediate|asap|critical|severe)\b/)) descScore += 12;
+    else if (desc.match(/\b(overflow|leak|broken|smell|odor|pest|rat|cockroach)\b/)) descScore += 8;
+    else if (desc.match(/\b(dirty|filthy|messy|needs cleaning|very)\b/)) descScore += 5;
+    else if (desc.match(/\b(small|minor|little|bit)\b/)) descScore -= 3;
+    
+    // Description length suggests detail/severity
+    if (description.length > 200) descScore += 3;
+    else if (description.length > 100) descScore += 2;
+    else if (description.length < 30) descScore -= 2;
+    
+    score += Math.max(0, Math.min(descScore, 15));
+  }
 
-  // Escalation level (0-15 points)
-  score += Math.min(escalationLevel * 5, 15);
+  // Photo count (0-10 points) - more photos = more evidence of severity
+  if (photoCount && photoCount > 0) {
+    score += Math.min(photoCount * 3, 10);
+  }
 
-  // Age factor (0-10 points) - older issues get higher score
-  const ageScore = Math.min(Math.floor(ageInHours / 6), 10); // +1 point per 6 hours, max 10
+  // Vote count (0-15 points) - community validation
+  score += Math.min(voteCount * 2, 15);
+
+  // Escalation level (0-10 points)
+  score += Math.min(escalationLevel * 5, 10);
+
+  // Age factor (0-5 points) - reduced weight, older issues get slight boost
+  const ageScore = Math.min(Math.floor(ageInHours / 12), 5);
   score += ageScore;
 
   return Math.min(score, 100);
@@ -52,6 +78,7 @@ export function calculateUrgencyScore(params: {
 
 /**
  * Auto-assign priority based on category and initial assessment
+ * This is a fallback when AI classification is unavailable
  */
 export function calculateInitialPriority(
   category: IssueCategory,
@@ -59,21 +86,31 @@ export function calculateInitialPriority(
 ): PriorityLevel {
   const desc = description.toLowerCase();
   
-  // Critical keywords
-  const criticalKeywords = ["emergency", "urgent", "overflow", "leak", "broken", "hazard", "injury"];
+  // Critical keywords - severe hazards
+  const criticalKeywords = ["emergency", "sewage", "biohazard", "injury", "broken glass", "structural damage", "major leak"];
   const hasCriticalKeyword = criticalKeywords.some((keyword) => desc.includes(keyword));
   
   if (hasCriticalKeyword) {
     return "CRITICAL";
   }
 
-  // High priority categories
-  const highPriorityCategories: IssueCategory[] = ["WASHROOM", "CANTEEN"];
-  if (highPriorityCategories.includes(category)) {
+  // High priority keywords - significant issues
+  const highKeywords = ["overflow", "leak", "foul smell", "pest", "rats", "cockroach", "large spill"];
+  const hasHighKeyword = highKeywords.some((keyword) => desc.includes(keyword));
+  
+  if (hasHighKeyword) {
     return "HIGH";
   }
 
-  // Medium by default
+  // Low priority keywords - minor issues
+  const lowKeywords = ["small", "minor", "tiny", "dust", "spot", "little"];
+  const hasLowKeyword = lowKeywords.some((keyword) => desc.includes(keyword));
+  
+  if (hasLowKeyword) {
+    return "LOW";
+  }
+
+  // Default to MEDIUM for most cases (not HIGH)
   return "MEDIUM";
 }
 
