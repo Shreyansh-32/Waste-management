@@ -10,7 +10,10 @@ export async function POST(request: Request) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { message: "Invalid input.", issues: parsed.error.flatten().fieldErrors },
+        {
+          message: "Invalid input.",
+          issues: parsed.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }
@@ -43,8 +46,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ user }, { status: 201 });
   } catch (error) {
+    // Log server-side but never expose raw error details to the client
+    console.error("[POST /api/auth/signup]", error);
     return NextResponse.json(
-      { message: "Something went wrong." ,error},
+      { message: "Something went wrong. Please try again." },
       { status: 500 }
     );
   }
