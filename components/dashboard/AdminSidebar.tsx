@@ -4,17 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Kanban, Map, Lightbulb,
-  BarChart2, Users, Leaf, X,
+  BarChart2, Users, Leaf, X, ListChecks, Bell, Building2, LineChart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Overview",        href: "/dashboard/admin/overview",         icon: LayoutDashboard },
+  { label: "Issues",          href: "/dashboard/admin/issues",           icon: ListChecks },
+  { label: "Assignments",     href: "/dashboard/admin/assignments",      icon: Kanban },
+  { label: "Locations",       href: "/dashboard/admin/locations",        icon: Building2 },
   { label: "Kanban Board",    href: "/dashboard/admin/kanban",           icon: Kanban },
   { label: "Heatmap",         href: "/dashboard/admin/heatmap",          icon: Map },
   { label: "Recommendations", href: "/dashboard/admin/recommendations",  icon: Lightbulb },
   { label: "Analytics",       href: "/dashboard/admin/analytics",        icon: BarChart2 },
+  { label: "Trends",          href: "/dashboard/admin/trends",           icon: LineChart },
   { label: "Staff",           href: "/dashboard/admin/staff",            icon: Users },
+  { label: "Notifications",   href: "/dashboard/admin/notifications",    icon: Bell },
 ];
 
 interface AdminSidebarProps {

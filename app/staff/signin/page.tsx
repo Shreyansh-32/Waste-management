@@ -10,7 +10,7 @@ import { signInSchema } from "@/lib/validations/auth";
 import type { z } from "zod";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import Button from "@/components/ui/Button";
 import Navbar from "@/components/Navbar";
 
 type SignInValues = z.infer<typeof signInSchema>;

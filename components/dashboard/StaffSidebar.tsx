@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardList, History, User, Leaf, X } from "lucide-react";
+import { ClipboardList, History, User, Leaf, X, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "My Tasks",    href: "/dashboard/staff/tasks",   icon: ClipboardList },
   { label: "History",     href: "/dashboard/staff/history", icon: History },
   { label: "My Profile",  href: "/dashboard/staff/profile", icon: User },
+  { label: "Notifications", href: "/dashboard/staff/notifications", icon: Bell },
 ];
 
 interface StaffSidebarProps {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
+import Button from "@/components/ui/Button";
 import { UploadButton } from "@/lib/uploadthing-client";
 import toast from "react-hot-toast";
 
@@ -82,6 +82,13 @@ export default function CompleteAssignmentPage() {
                 <label className="text-sm font-medium">Completion photo</label>
                 <UploadButton
                   endpoint="completionImages"
+                  appearance={{
+                    container: "w-full",
+                    button:
+                      "w-full rounded-2xl border border-emerald-200 bg-emerald-50 !text-emerald-900 hover:bg-emerald-100 dark:border-emerald-900/40 dark:bg-slate-900 dark:!text-emerald-100 dark:hover:bg-slate-800",
+                    label: "!text-emerald-900 dark:!text-emerald-100",
+                    allowedContent: "text-xs text-slate-500 dark:text-slate-400",
+                  }}
                   onClientUploadComplete={(res) => {
                     const url = res[0]?.url;
                     if (url) {

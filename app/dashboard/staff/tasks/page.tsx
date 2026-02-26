@@ -40,11 +40,7 @@ export default function StaffTasksPage() {
 
   const handleStart = async (assignmentId: string) => {
     try {
-      await fetch("/api/dashboard/staff/tasks", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assignmentId, action: "start" }),
-      });
+      await fetch(`/api/assignments/${assignmentId}/start`, { method: "POST" });
       toast.success("Task started");
       mutate();
     } catch {

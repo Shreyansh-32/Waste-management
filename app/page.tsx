@@ -1,15 +1,5 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import Navbar from "@/components/sections/Navbar";
-import Hero from "@/components/sections/Hero";
-import Features from "@/components/sections/Features";
-import HowItWorks from "@/components/sections/HowItWorks";
-import AnalyticsPreview from "@/components/sections/AnalyticsPreview";
-import ImpactStats from "@/components/sections/ImpactStats";
-import CallToAction from "@/components/sections/CallToAction";
-import Footer from "@/components/sections/Footer";
-import type { Session } from "next-auth";
-
 import type { Session } from "next-auth";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";

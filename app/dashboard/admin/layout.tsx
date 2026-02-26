@@ -1,33 +1,19 @@
-"use client";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth";
+import AdminLayoutClient from "@/components/dashboard/AdminLayoutClient";
 
-import { useState } from "react";
-import { AdminSidebar } from "@/components/dashboard/AdminSidebar";
-import { DashboardNavbar } from "@/components/dashboard/DashboardNavbar";
-import { usePathname } from "next/navigation";
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(authOptions);
 
-const pageTitles: Record<string, string> = {
-  "/dashboard/admin/overview":         "Overview",
-  "/dashboard/admin/kanban":           "Kanban Board",
-  "/dashboard/admin/heatmap":          "Location Heatmap",
-  "/dashboard/admin/recommendations":  "Recommendations",
-  "/dashboard/admin/analytics":        "Analytics",
-  "/dashboard/admin/staff":            "Staff Performance",
-};
+  if (!session) {
+    redirect("/signin");
+  }
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const pathname = usePathname();
-  const title = pageTitles[pathname] ?? "Admin Dashboard";
+  const role = (session.user as { role?: string } | undefined)?.role;
+  if (role !== "ADMIN") {
+    redirect("/dashboard");
+  }
 
-  return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
-      <AdminSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-        <DashboardNavbar title={title} onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
+  return <AdminLayoutClient>{children}</AdminLayoutClient>;
 }

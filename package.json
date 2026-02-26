@@ -22,11 +22,8 @@
     "bcrypt": "^6.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-<<<<<<< HEAD
     "geist": "^1.3.0",
-=======
     "framer-motion": "^12.34.3",
->>>>>>> vaibhav
     "lucide-react": "^0.575.0",
     "motion": "^12.34.3",
     "next": "16.1.6",

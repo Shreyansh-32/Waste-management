@@ -11,8 +11,8 @@ import { signUpSchema } from "@/lib/validations/auth";
 import type { z } from "zod";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
+import Button from "@/components/ui/Button";
 
 type SignUpValues = z.infer<typeof signUpSchema>;
 

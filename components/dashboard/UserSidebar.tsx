@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, Leaf, X } from "lucide-react";
+import { FileText, Leaf, X, Bell, ListChecks } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "My Requests", href: "/dashboard/user/requests", icon: FileText },
+  { label: "Campus Issues", href: "/dashboard/user/issues", icon: ListChecks },
+  { label: "Notifications", href: "/dashboard/user/notifications", icon: Bell },
 ];
 
 interface UserSidebarProps {
