@@ -38,7 +38,7 @@ export default function AnalyticsPreview() {
 
   return (
     <section id="analytics" className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 bg-linear-to-b from-white via-emerald-50/20 to-white pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-white dark:from-slate-950 via-emerald-50/20 dark:via-emerald-950/10 to-white dark:to-slate-950 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative">
         {/* Header */}
@@ -52,13 +52,13 @@ export default function AnalyticsPreview() {
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-600 mb-4 block">
             Analytics Dashboard
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-5 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-slate-50 mb-5 leading-tight">
             Data that drives{" "}
             <span className="bg-linear-to-r from-emerald-500 to-lime-500 bg-clip-text text-transparent">
               real decisions
             </span>
           </h2>
-          <p className="text-slate-500 text-lg leading-relaxed">
+          <p className="text-slate-500 dark:text-slate-400 text-lg leading-relaxed">
             Live insights across every zone, every shift. Optimize resources
             and predict issues before they escalate.
           </p>
@@ -71,7 +71,7 @@ export default function AnalyticsPreview() {
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           className="relative max-w-5xl mx-auto"
         >
-          <div className="bg-white rounded-3xl shadow-2xl shadow-emerald-100/60 border border-emerald-100 overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl shadow-emerald-100/60 dark:shadow-emerald-950/50 border border-emerald-100 dark:border-emerald-900 overflow-hidden">
             {/* Dashboard header bar */}
             <div className="bg-linear-to-r from-slate-900 to-slate-800 px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -91,11 +91,11 @@ export default function AnalyticsPreview() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+            <div className="grid md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800">
               {/* Left: Heatmap */}
               <div className="p-6 col-span-1">
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-bold text-slate-800 text-sm">Campus Heatmap</h4>
+                  <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">Campus Heatmap</h4>
                   <MapPin className="w-4 h-4 text-emerald-500" />
                 </div>
 
@@ -119,11 +119,11 @@ export default function AnalyticsPreview() {
 
                 {/* Legend */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-slate-400">Low</span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">Low</span>
                   {["bg-emerald-600/50", "bg-yellow-400/70", "bg-orange-400/80", "bg-red-500/90"].map((c, i) => (
                     <div key={i} className={`w-4 h-3 rounded-sm ${c}`} />
                   ))}
-                  <span className="text-[10px] text-slate-400">High</span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">High</span>
                 </div>
 
                 {/* Zone labels */}
@@ -134,8 +134,8 @@ export default function AnalyticsPreview() {
                     { zone: "Washrooms", risk: "Med" },
                     { zone: "Gym", risk: "Low" },
                   ].map((z) => (
-                    <div key={z.zone} className="bg-slate-50 rounded-lg p-2">
-                      <p className="text-[10px] font-semibold text-slate-600">{z.zone}</p>
+                    <div key={z.zone} className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2">
+                      <p className="text-[10px] font-semibold text-slate-600 dark:text-slate-400">{z.zone}</p>
                       <p className={`text-[10px] font-bold ${z.risk === "High" ? "text-red-500" : z.risk === "Med" ? "text-amber-500" : "text-emerald-600"}`}>
                         {z.risk} risk
                       </p>
@@ -147,7 +147,7 @@ export default function AnalyticsPreview() {
               {/* Middle: Weekly trend */}
               <div className="p-6 col-span-1">
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-bold text-slate-800 text-sm">Weekly Score Trend</h4>
+                  <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">Weekly Score Trend</h4>
                   <TrendingUp className="w-4 h-4 text-emerald-500" />
                 </div>
 
@@ -167,19 +167,19 @@ export default function AnalyticsPreview() {
 
                 <div className="flex gap-2 justify-between">
                   {weekData.map((d) => (
-                    <div key={d.day} className="flex-1 text-center text-[10px] text-slate-400 font-medium">
+                    <div key={d.day} className="flex-1 text-center text-[10px] text-slate-400 dark:text-slate-500 font-medium">
                       {d.day}
                     </div>
                   ))}
                 </div>
 
                 {/* Score badge */}
-                <div className="mt-4 bg-emerald-50 border border-emerald-100 rounded-xl p-3 flex items-center justify-between">
+                <div className="mt-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl p-3 flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-slate-500">7-day average</p>
-                    <p className="text-2xl font-black text-slate-800">80.4</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">7-day average</p>
+                    <p className="text-2xl font-black text-slate-800 dark:text-slate-200">80.4</p>
                   </div>
-                  <div className="flex items-center gap-1 bg-emerald-100 text-emerald-700 text-xs font-bold px-2.5 py-1.5 rounded-full">
+                  <div className="flex items-center gap-1 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 text-xs font-bold px-2.5 py-1.5 rounded-full">
                     <TrendingUp className="w-3 h-3" />
                     +12%
                   </div>
@@ -189,7 +189,7 @@ export default function AnalyticsPreview() {
               {/* Right: KPIs */}
               <div className="p-6 col-span-1">
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-bold text-slate-800 text-sm">Key Metrics</h4>
+                  <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">Key Metrics</h4>
                   <Zap className="w-4 h-4 text-emerald-500" />
                 </div>
 
@@ -202,13 +202,13 @@ export default function AnalyticsPreview() {
                   ].map((m) => (
                     <div key={m.label}>
                       <div className="flex justify-between items-baseline mb-1.5">
-                        <span className="text-xs text-slate-500">{m.label}</span>
-                        <span className="text-sm font-bold text-slate-800">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">{m.label}</span>
+                        <span className="text-sm font-bold text-slate-800 dark:text-slate-200">
                           {m.val}
-                          <span className="text-xs text-slate-400 font-normal ml-0.5">{m.unit}</span>
+                          <span className="text-xs text-slate-400 dark:text-slate-500 font-normal ml-0.5">{m.unit}</span>
                         </span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2">
+                      <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={isInView ? { width: `${(m.val / m.max) * 100}%` } : {}}

@@ -76,7 +76,7 @@ export default function Features() {
 
   return (
     <section id="features" className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 bg-linear-to-b from-white via-emerald-50/30 to-white pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-white dark:from-slate-950 via-emerald-50/30 dark:via-emerald-950/20 to-white dark:to-slate-950 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative">
         {/* Header */}
@@ -90,13 +90,13 @@ export default function Features() {
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-600 mb-4 block">
             Platform Capabilities
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-5 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-slate-50 mb-5 leading-tight">
             Everything you need to{" "}
             <span className="bg-linear-to-r from-emerald-500 to-lime-500 bg-clip-text text-transparent">
               run a clean campus
             </span>
           </h2>
-          <p className="text-slate-500 text-lg leading-relaxed">
+          <p className="text-slate-500 dark:text-slate-400 text-lg leading-relaxed">
             A complete operational toolkit purpose-built for campus facilities
             managers and sustainability teams.
           </p>
@@ -116,7 +116,7 @@ export default function Features() {
               <motion.div
                 key={feature.title}
                 whileHover={{ y: -6, boxShadow: "0 20px 60px -10px rgba(16,185,129,0.15)" }}
-                className="group bg-white rounded-2xl p-7 border border-slate-100 shadow-sm hover:border-emerald-200 transition-all duration-300 cursor-default"
+                className="group bg-white dark:bg-slate-900 rounded-2xl p-7 border border-slate-100 dark:border-slate-800 shadow-sm hover:border-emerald-200 dark:hover:border-emerald-700 transition-all duration-300 cursor-default"
               >
                 {/* Icon */}
                 <div
@@ -125,10 +125,10 @@ export default function Features() {
                   <Icon className="w-6 h-6 text-white" />
                 </div>
 
-                <h3 className="text-lg font-bold text-slate-800 mb-2.5">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2.5">
                   {feature.title}
                 </h3>
-                <p className="text-slate-500 text-sm leading-relaxed">
+                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
                   {feature.description}
                 </p>
 

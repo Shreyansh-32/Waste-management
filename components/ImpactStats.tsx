@@ -40,7 +40,7 @@ function StatCard({ icon: Icon, prefix = "", value, suffix, label, sublabel, sta
   return (
     <motion.div
       whileHover={{ y: -6 }}
-      className="group relative bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-emerald-100 hover:border-emerald-200 transition-all duration-300 text-center overflow-hidden"
+      className="group relative bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:shadow-emerald-100 dark:hover:shadow-emerald-950/50 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all duration-300 text-center overflow-hidden"
     >
       {/* Background glow */}
       <div className={`absolute inset-0 bg-linear-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-3xl`} />
@@ -52,15 +52,15 @@ function StatCard({ icon: Icon, prefix = "", value, suffix, label, sublabel, sta
 
       {/* Number */}
       <div className="flex items-baseline justify-center gap-1 mb-2">
-        <span className="text-slate-400 text-2xl font-bold">{prefix}</span>
-        <span className="text-5xl font-black text-slate-900 tabular-nums">{count}</span>
+        <span className="text-slate-400 dark:text-slate-500 text-2xl font-bold">{prefix}</span>
+        <span className="text-5xl font-black text-slate-900 dark:text-slate-100 tabular-nums">{count}</span>
         <span className={`text-2xl font-black bg-linear-to-r ${gradient} bg-clip-text text-transparent`}>
           {suffix}
         </span>
       </div>
 
-      <h3 className="font-bold text-slate-800 text-lg mb-1">{label}</h3>
-      <p className="text-slate-400 text-sm">{sublabel}</p>
+      <h3 className="font-bold text-slate-800 dark:text-slate-200 text-lg mb-1">{label}</h3>
+      <p className="text-slate-400 dark:text-slate-500 text-sm">{sublabel}</p>
     </motion.div>
   );
 }
@@ -106,7 +106,7 @@ export default function ImpactStats() {
 
   return (
     <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 bg-linear-to-b from-emerald-50/30 via-white to-white pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-emerald-50/30 dark:from-emerald-950/20 via-white dark:via-slate-950 to-white dark:to-slate-950 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative">
         <motion.div
@@ -119,13 +119,13 @@ export default function ImpactStats() {
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-600 mb-4 block">
             Proven Impact
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-5 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-slate-50 mb-5 leading-tight">
             Numbers that{" "}
             <span className="bg-linear-to-r from-emerald-500 to-lime-500 bg-clip-text text-transparent">
               speak for themselves
             </span>
           </h2>
-          <p className="text-slate-500 text-lg">
+          <p className="text-slate-500 dark:text-slate-400 text-lg">
             Real outcomes from campuses already running our platform.
           </p>
         </motion.div>

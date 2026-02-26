@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { signUpSchema } from "@/lib/validations/auth";
@@ -17,7 +16,7 @@ import Navbar from "@/components/Navbar";
 
 type SignUpValues = z.infer<typeof signUpSchema>;
 
-export default function SignUpPage() {
+export default function AdminSignUpPage() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const {
@@ -33,10 +32,11 @@ export default function SignUpPage() {
       confirmPassword: "",
     },
   });
+
   const onSubmit = async (values: SignUpValues) => {
     setServerError(null);
     try {
-      await axios.post("/api/auth/signup", {
+      await axios.post("/api/auth/admin/signup", {
         name: values.name,
         email: values.email,
         password: values.password,
@@ -44,8 +44,7 @@ export default function SignUpPage() {
       });
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const message =
-          error.response?.data?.message ?? "Unable to create account.";
+        const message = error.response?.data?.message ?? "Unable to create account.";
         setServerError(message);
         toast.error(message);
         return;
@@ -55,20 +54,8 @@ export default function SignUpPage() {
       return;
     }
 
-    const signInResult = await signIn("credentials", {
-      redirect: false,
-      email: values.email,
-      password: values.password,
-    });
-
-    if (!signInResult || signInResult.error) {
-      toast.success("Account created. Please sign in.");
-      router.push("/signin");
-      return;
-    }
-
-    toast.success("Account created successfully.");
-    router.push("/dashboard");
+    toast.success("Admin account created successfully.");
+    router.push("/");
   };
 
   const onError = (formErrors: typeof errors) => {
@@ -104,23 +91,20 @@ export default function SignUpPage() {
               transition={{ duration: 0.8 }}
             >
               <div className="mb-6">
-                <h2 className="text-2xl font-bold">Create account</h2>
+                <h2 className="text-2xl font-bold">Create admin account</h2>
                 <p className="text-sm text-muted-foreground">
-                  Start reporting and tracking cleanliness issues in minutes.
+                  Create a privileged account for campus oversight.
                 </p>
               </div>
 
-              <form
-                className="space-y-5"
-                onSubmit={handleSubmit(onSubmit, onError)}
-              >
+              <form className="space-y-5" onSubmit={handleSubmit(onSubmit, onError)}>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Full name</label>
                   <input
                     type="text"
                     {...register("name")}
                     className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
-                    placeholder="Priya Sharma"
+                    placeholder="Aarav Mehta"
                   />
                   {errors.name && (
                     <p className="text-xs text-destructive">{errors.name.message}</p>
@@ -133,7 +117,7 @@ export default function SignUpPage() {
                     type="email"
                     {...register("email")}
                     className="w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
-                    placeholder="you@campus.edu"
+                    placeholder="admin@campus.edu"
                   />
                   {errors.email && (
                     <p className="text-xs text-destructive">{errors.email.message}</p>
@@ -149,9 +133,7 @@ export default function SignUpPage() {
                     placeholder="Create a password"
                   />
                   {errors.password && (
-                    <p className="text-xs text-destructive">
-                      {errors.password.message}
-                    </p>
+                    <p className="text-xs text-destructive">{errors.password.message}</p>
                   )}
                 </div>
 
@@ -164,9 +146,7 @@ export default function SignUpPage() {
                     placeholder="Re-enter your password"
                   />
                   {errors.confirmPassword && (
-                    <p className="text-xs text-destructive">
-                      {errors.confirmPassword.message}
-                    </p>
+                    <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>
                   )}
                 </div>
 
@@ -187,8 +167,8 @@ export default function SignUpPage() {
               </form>
 
               <p className="mt-6 text-center text-sm text-muted-foreground">
-                Already have an account?{" "}
-                <Link className="font-medium text-primary hover:underline" href="/signin">
+                Already have an admin account?{" "}
+                <Link className="font-medium text-primary hover:underline" href="/admin/signin">
                   Sign in
                 </Link>
               </p>
@@ -211,27 +191,27 @@ export default function SignUpPage() {
                 <span className="text-xl font-bold">CampusClean</span>
               </div>
               <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl text-slate-900 dark:text-slate-100">
-                Cleanliness with a
+                Build a cleaner
                 <span className="block bg-linear-to-r from-emerald-500 via-lime-500 to-emerald-400 bg-clip-text text-transparent">
-                  real-time edge.
+                  campus strategy.
                 </span>
               </h1>
               <p className="max-w-md text-base text-muted-foreground">
-                Share live issues, get faster response times, and see every task
-                verified with proof.
+                Access real-time analytics, prioritize escalations, and keep the
+                campus spotless.
               </p>
               <div className="grid gap-3 text-sm text-muted-foreground">
                 <div className="flex items-center gap-3">
                   <span className="h-2 w-2 rounded-full bg-primary" />
-                  Auto-priority with urgency scoring
+                  Live dashboard + KPIs
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="h-2 w-2 rounded-full bg-primary" />
-                  QR-tagged locations + heatmap insights
+                  Multi-team assignment control
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="h-2 w-2 rounded-full bg-primary" />
-                  Verified completion with after photos
+                  Priority escalation oversight
                 </div>
               </div>
             </motion.section>
