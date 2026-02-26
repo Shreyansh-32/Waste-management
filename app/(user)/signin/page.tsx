@@ -55,21 +55,22 @@ export default function SignInPage() {
 	return (
 		<>
 			<Navbar />
-			<div className="relative min-h-screen overflow-hidden bg-linear-to-b from-background via-background to-muted">
+			<div className="relative min-h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+				<div className="absolute inset-0 bg-grid pointer-events-none" />
 				<div className="pointer-events-none absolute inset-0">
 					<motion.div
-						className="absolute -top-20 left-10 h-56 w-56 rounded-full bg-primary/20 blur-3xl"
+						className="absolute -top-20 left-10 h-56 w-56 rounded-full bg-emerald-300/30 dark:bg-emerald-500/20 blur-3xl"
 						animate={{ y: [0, 50, 0] }}
 						transition={{ duration: 8, repeat: Infinity }}
 					/>
 					<motion.div
-						className="absolute right-10 top-24 h-64 w-64 rounded-full bg-secondary/20 blur-3xl"
+						className="absolute right-10 top-24 h-64 w-64 rounded-full bg-lime-200/40 dark:bg-lime-500/15 blur-3xl"
 						animate={{ y: [0, -50, 0] }}
 						transition={{ duration: 10, repeat: Infinity, delay: 1 }}
 					/>
 				</div>
 
-				<div className="relative mx-auto flex min-h-[calc(100vh-88px)] max-w-6xl items-center px-6 py-16">
+				<div className="relative mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-20">
 					<div className="grid w-full gap-12 md:grid-cols-[1.1fr_0.9fr]">
 						<motion.section
 							className="flex flex-col justify-center gap-6"
@@ -87,9 +88,9 @@ export default function SignInPage() {
 								/>
 								<span className="text-xl font-bold">CampusClean</span>
 							</div>
-							<h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
+							<h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl text-slate-900 dark:text-slate-100">
 								Sign in to manage your campus
-								<span className="block bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
+								<span className="block bg-linear-to-r from-emerald-500 to-lime-500 bg-clip-text text-transparent">
 									operations.
 								</span>
 							</h1>
@@ -104,7 +105,7 @@ export default function SignInPage() {
 						</motion.section>
 
 						<motion.section
-							className="rounded-3xl border border-border/40 bg-card/80 p-8 shadow-[0_20px_60px_rgba(10,10,10,0.12)] backdrop-blur supports-backdrop-filter:bg-background/60"
+							className="rounded-3xl border border-emerald-100/60 dark:border-emerald-900/40 bg-white/85 dark:bg-slate-900/80 p-8 shadow-[0_20px_60px_rgba(10,10,10,0.12)] backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-slate-900/70"
 							initial={{ opacity: 0, x: 20 }}
 							animate={{ opacity: 1, x: 0 }}
 							transition={{ duration: 0.8, delay: 0.2 }}
@@ -158,7 +159,7 @@ export default function SignInPage() {
 								type="submit"
 								disabled={isSubmitting}
 								size="lg"
-								className="w-full bg-primary text-primary-foreground transition disabled:cursor-not-allowed disabled:opacity-70 hover:bg-primary/90"
+								className="w-full bg-linear-to-r from-emerald-500 to-emerald-600 text-white shadow-md shadow-emerald-200/80 transition disabled:cursor-not-allowed disabled:opacity-70 hover:shadow-emerald-300/80"
 							>
 								{isSubmitting ? "Signing in..." : "Sign in"}
 							</Button>
