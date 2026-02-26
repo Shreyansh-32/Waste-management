@@ -42,7 +42,7 @@ export default function StaffSignInPage() {
       }
 
       toast.success("Signed in successfully.");
-      router.push("/");
+      router.push("/dashboard");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Invalid email or password.";
       setServerError(message);

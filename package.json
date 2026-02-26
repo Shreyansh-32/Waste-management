@@ -16,6 +16,7 @@
     "@prisma/client-runtime-utils": "^7.4.1",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@types/bcrypt": "^6.0.0",
+    "@uploadthing/react": "^7.3.3",
     "aceternity-ui": "^0.2.2",
     "axios": "^1.13.5",
     "bcrypt": "^6.0.0",

@@ -55,7 +55,7 @@ export default function StaffSignUpPage() {
     }
 
     toast.success("Staff account created successfully.");
-    router.push("/");
+    router.push("/dashboard");
   };
 
   const onError = (formErrors: typeof errors) => {

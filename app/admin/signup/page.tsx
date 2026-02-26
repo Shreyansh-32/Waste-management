@@ -55,7 +55,7 @@ export default function AdminSignUpPage() {
     }
 
     toast.success("Admin account created successfully.");
-    router.push("/");
+    router.push("/dashboard");
   };
 
   const onError = (formErrors: typeof errors) => {
